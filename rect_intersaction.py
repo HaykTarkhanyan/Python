@@ -4,10 +4,17 @@ from collections import namedtuple
 Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
 # we will need this namedtuple in the class
 
-# for modifing parametrs go to line 150
+# for modifing parametrs go to line ~165
 
 
 class Rectangle:
+    """
+    Rectangle class has methods to understand which rectangle is nested,
+    calculate its area, calculate ovelap area, depending on precentage of overlapped
+    area can expand one rectangle or cut it. All this staff is done with taking into
+    account that one rectangle is more significant then another one.
+    """
+
     # rectangle is inintialized only by it's cordinates and importance
     def __init__(self, xmin, ymin, xmax, ymax, importance, threshold):
         self.xmin = xmin
@@ -159,6 +166,8 @@ re_1 = Rectangle(2, 5, 6, 8, importance_first, threshold)
 re_2 = Rectangle(4, 2, 5, 6, importance_second, threshold)
 
 
+print(Rectangle.__doc__)
+
 # all the results are shown by code below
 print("First rectangle's cordinates are: \n" +
       "   xmin, ymin: " + str(re_1.xmin) + "  " + str(re_1.ymin) +
@@ -201,4 +210,4 @@ second = json.dumps(second_square._asdict(), indent=4)
 with open('first_square.json', 'w') as json_file:
     json.dump(first, json_file)
 with open('second_square.json', 'w') as json_file:
-    json.dump(second_square, json_file)
+    json.dump(second, json_file)
