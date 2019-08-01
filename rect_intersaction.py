@@ -1,5 +1,10 @@
 import json
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+from matplotlib.path import Path
+import numpy as np
 from collections import namedtuple
+from PIL import Image
 
 Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
 # we will need this namedtuple in the class
@@ -92,7 +97,9 @@ class Rectangle:
             new_min_x, new_max_x = [other.xmin, other.xmax]
             return ("Second rectangle's new cordinates are: \n" +
                     "   xmin, ymin: " + str(new_min_x) + "  " + str(new_min_y) +
-                    "\n   xmax, ymax: " + str(new_max_x) + "  " + str(new_max_y))
+                    "\n   xmax, ymax: " +
+                    str(new_max_x) + "  " + str(new_max_y),
+                    [new_min_x, new_min_y, new_max_x, new_max_y])
 
         elif self.line_croper(self.line_y, other.line_y) == "Already Done":
             # if y axes lines are nested we don't change them
@@ -100,7 +107,9 @@ class Rectangle:
             new_min_y, new_max_y = [other.ymin, other.ymax]
             return ("First rectangle's new cordinates are: \n" +
                     "   xmin, ymin: " + str(new_min_x) + "  " + str(new_min_y) +
-                    "\n   xmax, ymax: " + str(new_max_x) + "  " + str(new_max_y))
+                    "\n   xmax, ymax: " +
+                    str(new_max_x) + "  " + str(new_max_y),
+                    [new_min_x, new_min_y, new_max_x, new_max_y])
 
         else:
             # once it changes horizontal cordinates, once vertiacals and compares
@@ -120,11 +129,15 @@ class Rectangle:
                 # decide which cut is the best
                 return ("Second rectangle's new cordinates are: \n" +
                         "   xmin, ymin: " + str(other.xmin) + "  " + str(new_min_y) +
-                        "\n   xmax, ymax: " + str(other.xmax) + "  " + str(new_max_y))
+                        "\n   xmax, ymax: " +
+                        str(other.xmax) + "  " + str(new_max_y),
+                        [other.xmin, new_min_y, other.xmax, new_max_y])
             else:
                 return ("Second rectangle's new cordinates are: \n" +
                         "   xmin, ymin: " + str(new_min_x) + "  " + str(other.xmin) +
-                        "\n   xmax, ymax: " + str(new_max_x) + "  " + str(other.xmax))
+                        "\n   xmax, ymax: " +
+                        str(new_max_x) + "  " + str(other.xmax),
+                        [new_min_x, other.xmin, new_max_x, other.xmax])
 
     def expander(self, other):
         # this functions expands less important rectangle so that imported
@@ -137,7 +150,9 @@ class Rectangle:
             other.line_y = Line(new_min_y, new_max_y)
             return ("Second rectangle's new cordinates are: \n" +
                     "   xmin, ymin: " + str(new_min_x) + "  " + str(new_min_y) +
-                    "\n   xmax, ymax: " + str(new_max_x) + "  " + str(new_max_y))
+                    "\n   xmax, ymax: " +
+                    str(new_max_x) + "  " + str(new_max_y),
+                    [new_min_x, new_min_y, new_max_x, new_max_y])
 
         # depending of rects importance it changes one of them
         else:
@@ -145,7 +160,10 @@ class Rectangle:
             self.line_y = Line(new_min_y, new_max_y)
             return ("First rectangle's new cordinates are: \n" +
                     "   xmin, ymin: " + str(new_min_x) + "  " + str(new_min_y) +
-                    "\n   xmax, ymax: " + str(new_max_x) + "  " + str(new_max_y))
+                    "\n   xmax, ymax: " +
+                    # added for visualizing
+                    str(new_max_x) + "  " + str(new_max_y),
+                    [new_min_x, new_min_y, new_max_x, new_max_y])
 
     def case_classifier(self, other):
         # function checks how big is overlaping part and decide to crop or expand
@@ -164,6 +182,14 @@ importance_second = 6
 
 re_1 = Rectangle(2, 5, 6, 8, importance_first, threshold)
 re_2 = Rectangle(4, 2, 5, 6, importance_second, threshold)
+
+
+# code below is for visualizing
+rect = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
+                     (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10, color='r', alpha=0.9)
+
+rect_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
+                       (re_2.xmax - re_2.xmin) / 10, (re_2.ymax - re_2.ymin) / 10, color='y', alpha=0.9)
 
 
 print(Rectangle.__doc__)
@@ -189,12 +215,41 @@ if not (re_1.check_if_nested(re_2) == "None of rectangles are nested"):
     print("No need to change anything")
 else:
     if re_1.importance > re_2.importance:
-        print(re_1.case_classifier(re_2))
+        re_2.xmin, re_2.ymin, re_2.xmax, re_2.ymax = re_1.case_classifier(re_2)[
+            1]
+        print(re_1.case_classifier(re_2)[0])
     else:
-        print(re_2.case_classifier(re_1))
+        re_1.xmin, re_1.ymin, re_1.xmax, re_1.ymax = re_2.case_classifier(re_1)[
+            1]
+
+        print(re_2.case_classifier(re_1)[0])
 
 
-# print(vars(re_2))
+# code below is for visualizing
+rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
+                         (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10, color='r', alpha=0.9)
+
+rect_new_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
+                           (re_2.xmax - re_2.xmin) / 10, (re_2.ymax - re_2.ymin) / 10, color='y', alpha=0.9)
+
+
+fig = plt.figure()
+
+# plt.subplot_adjust(hspace=5)
+
+ax = fig.add_subplot(1, 2, 1)
+ax_2 = fig.add_subplot(1, 2, 2)
+
+# ax.title("Before changes")
+
+ax.add_patch(rect)
+ax.add_patch(rect_2)
+
+ax_2.add_patch(rect_new)
+ax_2.add_patch(rect_new_2)
+
+
+plt.show()
 
 # converting to json
 
