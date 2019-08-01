@@ -103,12 +103,14 @@ class Rectangle:
             new_min_y, new_max_y = self.line_croper(
                 self.line_y, other.line_y)
 
+            # calculating areas in two different cut types
             area_1 = (new_max_x - new_min_x) * \
                      (other.ymax - other.ymin)
             area_2 = (new_max_y - new_min_y) * \
                      (other.xmax - other.xmin)
 
             if area_1 < area_2:
+                # decide which cut is the best
                 return ("Second rectangle's new cordinates are: \n" +
                         "   xmin, ymin: " + str(other.xmin) + "  " + str(new_min_y) +
                         "\n   xmax, ymax: " + str(other.xmax) + "  " + str(new_max_y))
@@ -152,12 +154,12 @@ class Rectangle:
 threshold = 0.5
 importance_first = 8
 importance_second = 6
-# re_1 = Rectangle(2, 5, 6, 8, importance_first, threshold)
-# re_2 = Rectangle(4, 2, 8, 6, importance_second, threshold)
 
 re_1 = Rectangle(2, 5, 6, 8, importance_first, threshold)
 re_2 = Rectangle(4, 2, 5, 6, importance_second, threshold)
 
+
+# all the results are shown by code below
 print("First rectangle's cordinates are: \n" +
       "   xmin, ymin: " + str(re_1.xmin) + "  " + str(re_1.ymin) +
       "\n   xmax, ymax: " + str(re_1.xmax) + "  " + str(re_1.ymax))
@@ -195,4 +197,8 @@ second_square = Square_to_json(re_2.xmin, re_2.ymin, re_2.xmax, re_2.ymax)
 first = json.dumps(first_square._asdict(), indent=4)
 second = json.dumps(second_square._asdict(), indent=4)
 
-# print(first)
+
+with open('first_square.json', 'w') as json_file:
+    json.dump(first, json_file)
+with open('second_square.json', 'w') as json_file:
+    json.dump(second_square, json_file)
