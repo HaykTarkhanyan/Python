@@ -1,15 +1,17 @@
 import json
+
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-from matplotlib.path import Path
 import numpy as np
+
+from matplotlib.path import Path
 from collections import namedtuple
-from PIL import Image
+
 
 Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
 # we will need this namedtuple in the class
 
-# for modifing parametrs go to line ~165
+# for modifing parametrs go to line ~185
 
 
 class Rectangle:
@@ -180,8 +182,8 @@ threshold = 0.5
 importance_first = 8
 importance_second = 6
 
-re_1 = Rectangle(2, 5, 6, 8, importance_first, threshold)
-re_2 = Rectangle(4, 2, 5, 6, importance_second, threshold)
+re_1 = Rectangle(2, 7, 9, 8, importance_first, threshold)
+re_2 = Rectangle(6, 5, 5, 6, importance_second, threshold)
 
 
 # code below is for visualizing
@@ -211,7 +213,9 @@ print("Overlap area is: " + str(re_1.calculate_overlap_area(re_2)))
 print(re_1.check_if_nested(re_2))
 print()
 
-if not (re_1.check_if_nested(re_2) == "None of rectangles are nested"):
+# check if everything is already done
+if not (re_1.check_if_nested(re_2) == "None of rectangles are nested") or \
+        re_1.calculate_overlap_area(re_2) == 0:
     print("No need to change anything")
 else:
     if re_1.importance > re_2.importance:
@@ -250,6 +254,7 @@ ax_2.add_patch(rect_new_2)
 
 
 plt.show()
+
 
 # converting to json
 
