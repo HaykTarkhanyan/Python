@@ -1,17 +1,15 @@
 import json
 
 import matplotlib.pyplot as plt
-import matplotlib.patches as patches
 import numpy as np
 
-from matplotlib.path import Path
 from collections import namedtuple
 
 
 Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
 # we will need this namedtuple in the class
 
-# for modifing parametrs go to line ~185
+# for modifing parametrs go to line ~200
 
 
 class Rectangle:
@@ -22,8 +20,9 @@ class Rectangle:
     account that one rectangle is more significant then another one.
     """
 
-    # rectangle is inintialized only by it's cordinates and importance
     def __init__(self, xmin, ymin, xmax, ymax, importance, threshold):
+        # rectangle is inintialized only by it's cordinates and importance
+
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
@@ -91,8 +90,23 @@ class Rectangle:
         return 'None of rectangles are nested'
 
     def cropper(self, other):
+
         # this function crops less important rectangle to avoid overlaps
         # also minimizes croped area
+        if self.line_croper(self.line_x, other.line_x) == "Already Done" and \
+           self.line_croper(self.line_y, other.line_y) == "Already Done":
+            # case when they are cross shaped
+            new_min_x, new_min_y = max(
+                self.xmin, other.xmin), max(self.ymin, other.ymin)
+            new_max_x, new_max_y = min(
+                self.xmax, other.xmax), min(self.ymax, other.ymax)
+
+            return ("Second rectangle's new cordinates are: \n" +
+                    "   xmin, ymin: " + str(new_min_x) + "  " + str(new_min_y) +
+                    "\n   xmax, ymax: " +
+                    str(new_max_x) + "  " + str(new_max_y),
+                    [new_min_x, new_min_y, new_max_x, new_max_y])
+
         if self.line_croper(self.line_x, other.line_x) == "Already Done":
             # if x axes lines are nested we don't change them
             new_min_y, new_max_y = self.line_croper(self.line_y, other.line_y)
@@ -178,20 +192,24 @@ class Rectangle:
 
 
 # threshold helps to understand what to use (cropper or expander)
-threshold = 0.5
-importance_first = 8
-importance_second = 6
+threshold = 0.9
+importance_first = 9
+importance_second = 12
 
-re_1 = Rectangle(2, 7, 9, 8, importance_first, threshold)
-re_2 = Rectangle(6, 5, 5, 6, importance_second, threshold)
+re_1 = Rectangle(2, 6, 9, 8, importance_first, threshold)
+re_2 = Rectangle(5, 5, 6, 9, importance_second, threshold)
 
 
 # code below is for visualizing
+# input should be xmin, ymin, width, height
 rect = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
-                     (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10, color='r', alpha=0.9)
+                     (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10,
+                     color='r', alpha=0.9)
 
 rect_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
-                       (re_2.xmax - re_2.xmin) / 10, (re_2.ymax - re_2.ymin) / 10, color='y', alpha=0.9)
+                       (re_2.xmax - re_2.xmin) /
+                       10, (re_2.ymax - re_2.ymin) / 10,
+                       color='y', alpha=0.9)
 
 
 print(Rectangle.__doc__)
@@ -214,7 +232,7 @@ print(re_1.check_if_nested(re_2))
 print()
 
 # check if everything is already done
-if not (re_1.check_if_nested(re_2) == "None of rectangles are nested") or \
+if (not (re_1.check_if_nested(re_2) == "None of rectangles are nested")) or \
         re_1.calculate_overlap_area(re_2) == 0:
     print("No need to change anything")
 else:
@@ -231,23 +249,31 @@ else:
 
 # code below is for visualizing
 rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
-                         (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10, color='r', alpha=0.9)
+                         (re_1.xmax - re_1.xmin) /
+                         10, (re_1.ymax - re_1.ymin) / 10,
+                         color='r', alpha=0.9)
 
 rect_new_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
-                           (re_2.xmax - re_2.xmin) / 10, (re_2.ymax - re_2.ymin) / 10, color='y', alpha=0.9)
+                           (re_2.xmax - re_2.xmin) /
+                           10, (re_2.ymax - re_2.ymin) / 10,
+                           color='y', alpha=0.9)
 
 
 fig = plt.figure()
 
-# plt.subplot_adjust(hspace=5)
-
 ax = fig.add_subplot(1, 2, 1)
 ax_2 = fig.add_subplot(1, 2, 2)
 
-# ax.title("Before changes")
+ax.title.set_text("Before changes")
+ax_2.title.set_text("Changed version")
 
-ax.add_patch(rect)
-ax.add_patch(rect_2)
+# depending on importance display signifiant is the top
+if re_1.importance > re_2.importance:
+    ax.add_patch(rect)
+    ax.add_patch(rect_2)
+else:
+    ax.add_patch(rect_2)
+    ax.add_patch(rect)
 
 ax_2.add_patch(rect_new)
 ax_2.add_patch(rect_new_2)
