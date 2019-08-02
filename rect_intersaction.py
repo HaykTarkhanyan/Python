@@ -10,7 +10,8 @@ Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
 # we will need this namedtuple in the class
 
 # for modifing parametrs go to line ~200
-
+Rect_base = namedtuple(
+    "Rect_base", ['xminim', 'xmaxim', 'yminim', 'ymaxim'], rename=False)
 
 class Rectangle:
     """
@@ -19,14 +20,13 @@ class Rectangle:
     area can expand one rectangle or cut it. All this staff is done with taking into
     account that one rectangle is more significant then another one.
     """
-
-    def __init__(self, xmin, ymin, xmax, ymax, importance, threshold):
+    def __init__(self, tuple_to_inherit, importance, threshold):
         # rectangle is inintialized only by it's cordinates and importance
+        self.xmin = tuple_to_inherit.xminim
+        self.ymin = tuple_to_inherit.yminim
+        self.xmax = tuple_to_inherit.xmaxim
+        self.ymax = tuple_to_inherit.ymaxim
 
-        self.xmin = xmin
-        self.ymin = ymin
-        self.xmax = xmax
-        self.ymax = ymax
         self.importance = importance
         self.threshold = threshold
         # we instanciate rectangle to vertical line and horizantal
@@ -196,8 +196,11 @@ threshold = 0.9
 importance_first = 9
 importance_second = 12
 
-re_1 = Rectangle(2, 6, 9, 8, importance_first, threshold)
-re_2 = Rectangle(5, 5, 6, 9, importance_second, threshold)
+rect_named_1 = Rect_base(xminim = 2,  yminim = 5, xmaxim = 9, ymaxim = 6)
+rect_named_2 = Rect_base(xminim = 4,  yminim = 3, xmaxim = 8, ymaxim = 8)
+
+re_1 = Rectangle(rect_named_1, importance_first, threshold)
+re_2 = Rectangle(rect_named_2, importance_second, threshold)
 
 
 # code below is for visualizing
