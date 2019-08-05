@@ -264,7 +264,7 @@ else:
         print(re_2.case_classifier(re_1)[0])
 
 
-code below is for visualizing with matplotlib
+#code below is for visualizing with matplotlib
 rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
                          (re_1.xmax - re_1.xmin) /
                          10, (re_1.ymax - re_1.ymin) / 10,
