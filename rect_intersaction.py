@@ -191,6 +191,24 @@ class Rectangle:
             return self.cropper(other)
         return self.expander(other)
 
+    def visualise(self,other, file_name):
+        # drawing with openCV
+        image_width = 50*(max(self.xmax, other.xmax) - min(self.xmin, other.xmin)) + 200
+        image_height = 50*(max(self.ymax, other.ymax) - min(self.ymin, other.ymin)) + 200
+
+
+        empty_image = 255 * np.ones(shape = [image_height, image_width, 3])
+
+        cv2.rectangle(empty_image,(50 * self.xmin,50 * self.ymin),
+                     (50 * self.xmax,50 * self.ymax),(0,0,255),5)
+        cv2.rectangle(empty_image,(50 * other.xmin,50 * other.ymin),
+                     (50 * other.xmax,50 * other.ymax),(255,255,0),5)
+
+
+        cv2.imwrite("{}.png". format(file_name), empty_image)
+
+
+
 
 # threshold helps to understand what to use (cropper or expander)
 threshold = 0.1
@@ -216,18 +234,7 @@ rect_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
                        color='y', alpha=0.9)
 
 # drawing with openCV
-image_width = 50*(max(re_1.xmax, re_2.xmax) - min(re_1.xmin, re_2.xmin)) + 200
-image_height = 50*(max(re_1.ymax, re_2.ymax) - min(re_1.ymin, re_2.ymin)) + 200
-
-
-empty_image = 255 * np.ones(shape = [image_height, image_width, 3])
-
-cv2.rectangle(empty_image,(50 * re_1.xmin,50 * re_1.ymin),(50 * re_1.xmax,50 * re_1.ymax),(0,0,255),5)
-cv2.rectangle(empty_image,(50 * re_2.xmin,50 * re_2.ymin),(50 * re_2.xmax,50 * re_2.ymax),(255,255,0),5)
-
-
-cv2.imwrite(r"C:\Users\Hayk\Desktop\Fronty\before.png", empty_image)
-
+re_1.visualise(re_2, "unchanged")
 
 print(Rectangle.__doc__)
 
@@ -264,7 +271,7 @@ else:
         print(re_2.case_classifier(re_1)[0])
 
 
-#code below is for visualizing with matplotlib
+# code below is for visualizing with matplotlib
 rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
                          (re_1.xmax - re_1.xmin) /
                          10, (re_1.ymax - re_1.ymin) / 10,
@@ -299,19 +306,7 @@ ax_2.add_patch(rect_new_2)
 plt.show()
 
 # drawing with openCV
-image_width = 50*(max(re_1.xmax, re_2.xmax) - min(re_1.xmin, re_2.xmin)) + 200
-image_height = 50*(max(re_1.ymax, re_2.ymax) - min(re_1.ymin, re_2.ymin)) + 200
-
-
-empty_image = 255 * np.ones(shape = [image_height, image_width, 3])
-
-cv2.rectangle(empty_image,(50 * re_1.xmin,50 * re_1.ymin),(50 * re_1.xmax,50 * re_1.ymax),(0,0,255),5)
-cv2.rectangle(empty_image,(50 * re_2.xmin,50 * re_2.ymin),(50 * re_2.xmax,50 * re_2.ymax),(255,255,0),5)
-
-
-cv2.imwrite(r"C:\Users\Hayk\Desktop\Fronty\after.png", empty_image)
-
-
+re_1.visualise(re_2, "after_changes")
 # converting to json
 
 Square_to_json = namedtuple("Square", 'xmin ymin xmax ymax')
