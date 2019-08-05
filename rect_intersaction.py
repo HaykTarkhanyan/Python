@@ -204,18 +204,17 @@ class Rectangle:
         cv2.rectangle(empty_image,(50 * other.xmin,50 * other.ymin),
                      (50 * other.xmax,50 * other.ymax),(255,255,0),5)
 
-
         cv2.imwrite("{}.png". format(file_name), empty_image)
 
 
 
 
 # threshold helps to understand what to use (cropper or expander)
-threshold = 0.1
+threshold = 0.7
 importance_first = 9
-importance_second = 12
+importance_second = 1
 
-rect_named_1 = Rect_base(xminim = 2,  yminim = 5, xmaxim = 9, ymaxim = 6)
+rect_named_1 = Rect_base(xminim = 2,  yminim = 2, xmaxim = 6, ymaxim = 6)
 rect_named_2 = Rect_base(xminim = 4,  yminim = 3, xmaxim = 8, ymaxim = 8)
 
 re_1 = Rectangle(rect_named_1, importance_first, threshold)
@@ -275,12 +274,12 @@ else:
 rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
                          (re_1.xmax - re_1.xmin) /
                          10, (re_1.ymax - re_1.ymin) / 10,
-                         color='r', alpha=0.9)
+                         color='r', alpha=1)
 
 rect_new_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
                            (re_2.xmax - re_2.xmin) /
                            10, (re_2.ymax - re_2.ymin) / 10,
-                           color='y', alpha=0.9)
+                           color='y', alpha=1)
 
 
 fig = plt.figure()
@@ -292,7 +291,7 @@ ax.title.set_text("Before changes")
 ax_2.title.set_text("Changed version")
 
 # depending on importance display signifiant is the top
-if re_1.importance > re_2.importance:
+if re_1.importance < re_2.importance:
     ax.add_patch(rect)
     ax.add_patch(rect_2)
 else:
@@ -307,6 +306,7 @@ plt.show()
 
 # drawing with openCV
 re_1.visualise(re_2, "after_changes")
+
 # converting to json
 
 Square_to_json = namedtuple("Square", 'xmin ymin xmax ymax')
