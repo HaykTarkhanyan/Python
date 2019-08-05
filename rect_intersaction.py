@@ -1,15 +1,16 @@
 import json
+import cv2
 
 import matplotlib.pyplot as plt
 import numpy as np
 
 from collections import namedtuple
 
+# for modifing parametrs go to line ~220
 
 Line = namedtuple("Line", ["xmin", "xmax"],  rename=False)
-# we will need this namedtuple in the class
+# we will need this namedtuples in the class
 
-# for modifing parametrs go to line ~200
 Rect_base = namedtuple(
     "Rect_base", ['xminim', 'xmaxim', 'yminim', 'ymaxim'], rename=False)
 
@@ -192,7 +193,7 @@ class Rectangle:
 
 
 # threshold helps to understand what to use (cropper or expander)
-threshold = 0.9
+threshold = 0.1
 importance_first = 9
 importance_second = 12
 
@@ -203,7 +204,7 @@ re_1 = Rectangle(rect_named_1, importance_first, threshold)
 re_2 = Rectangle(rect_named_2, importance_second, threshold)
 
 
-# code below is for visualizing
+# code below is for visualizing with matplotlib
 # input should be xmin, ymin, width, height
 rect = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
                      (re_1.xmax - re_1.xmin) / 10, (re_1.ymax - re_1.ymin) / 10,
@@ -213,6 +214,19 @@ rect_2 = plt.Rectangle((re_2.xmin / 10, re_2.ymin / 10),
                        (re_2.xmax - re_2.xmin) /
                        10, (re_2.ymax - re_2.ymin) / 10,
                        color='y', alpha=0.9)
+
+# drawing with openCV
+image_width = 50*(max(re_1.xmax, re_2.xmax) - min(re_1.xmin, re_2.xmin)) + 200
+image_height = 50*(max(re_1.ymax, re_2.ymax) - min(re_1.ymin, re_2.ymin)) + 200
+
+
+empty_image = 255 * np.ones(shape = [image_height, image_width, 3])
+
+cv2.rectangle(empty_image,(50 * re_1.xmin,50 * re_1.ymin),(50 * re_1.xmax,50 * re_1.ymax),(0,0,255),5)
+cv2.rectangle(empty_image,(50 * re_2.xmin,50 * re_2.ymin),(50 * re_2.xmax,50 * re_2.ymax),(255,255,0),5)
+
+
+cv2.imwrite(r"C:\Users\Hayk\Desktop\Fronty\before.png", empty_image)
 
 
 print(Rectangle.__doc__)
@@ -250,7 +264,7 @@ else:
         print(re_2.case_classifier(re_1)[0])
 
 
-# code below is for visualizing
+code below is for visualizing with matplotlib
 rect_new = plt.Rectangle((re_1.xmin / 10, re_1.ymin / 10),
                          (re_1.xmax - re_1.xmin) /
                          10, (re_1.ymax - re_1.ymin) / 10,
@@ -283,6 +297,19 @@ ax_2.add_patch(rect_new_2)
 
 
 plt.show()
+
+# drawing with openCV
+image_width = 50*(max(re_1.xmax, re_2.xmax) - min(re_1.xmin, re_2.xmin)) + 200
+image_height = 50*(max(re_1.ymax, re_2.ymax) - min(re_1.ymin, re_2.ymin)) + 200
+
+
+empty_image = 255 * np.ones(shape = [image_height, image_width, 3])
+
+cv2.rectangle(empty_image,(50 * re_1.xmin,50 * re_1.ymin),(50 * re_1.xmax,50 * re_1.ymax),(0,0,255),5)
+cv2.rectangle(empty_image,(50 * re_2.xmin,50 * re_2.ymin),(50 * re_2.xmax,50 * re_2.ymax),(255,255,0),5)
+
+
+cv2.imwrite(r"C:\Users\Hayk\Desktop\Fronty\after.png", empty_image)
 
 
 # converting to json
