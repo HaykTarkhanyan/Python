@@ -1,3 +1,5 @@
+# unfinished, messy, perhaps will never fix
+
 import random
 from collections import Counter
 
